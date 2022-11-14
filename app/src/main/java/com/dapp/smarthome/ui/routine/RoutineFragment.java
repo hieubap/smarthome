@@ -14,9 +14,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.dapp.smarthome.AuthActivity;
 import com.dapp.smarthome.MainActivity;
 import com.dapp.smarthome.QuizActivity;
 import com.dapp.smarthome.R;
+import com.dapp.smarthome.dao.QuizDAO;
 import com.dapp.smarthome.databinding.FragmentRoutineBinding;
 import com.dapp.smarthome.ui.routine.component.Routine;
 import com.dapp.smarthome.ui.routine.component.RoutineAdapter;
@@ -25,13 +27,17 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RoutineFragment extends Fragment {
 
     private FragmentRoutineBinding binding;
     public static int current = 0;
-    public TextView numText,questText;
+    public TextView numText,questText,correctText, ansText;
     public DataSnapshot dataQuestion;
+    public String dapAn;
+    public int correctNum = 0;
+    public List<QuizDAO> quizDAOS = new ArrayList<>();
 
     public void next(){
         current = current + 1;
@@ -47,6 +53,8 @@ public class RoutineFragment extends Fragment {
 
         numText = getView().findViewById(R.id.number_ans);
         questText = getView().findViewById(R.id.question_play_text);
+        correctText = getView().findViewById(R.id.correct_text);
+        ansText = getView().findViewById(R.id.answer_text);
 
         Button buttonPlay = getView().findViewById(R.id.btn_start);
         buttonPlay.setOnClickListener(new View.OnClickListener() {
@@ -55,22 +63,22 @@ public class RoutineFragment extends Fragment {
                 if(current == QuizActivity.size){
                     buttonPlay.setText("Start");
                     MainActivity.myRef.child("flag").child("status").setValue("finish");
+                    return;
                 }else if(current == 0){
                     MainActivity.myRef.child("flag").child("status").setValue("start");
-                    next();
-                    MainActivity.myRef.child("flag").child("current").setValue(current);
                 }else{
                     MainActivity.myRef.child("flag").child("status").setValue("playing");
-                    next();
-                    MainActivity.myRef.child("flag").child("current").setValue(current);
                     if(current == QuizActivity.size){
                         buttonPlay.setText("Finish");
                     }
                 }
 
-                if(dataQuestion != null){
-                    questText.setText(dataQuestion.child(QuizActivity.keyQuiz).child(current+"").child("question").getValue() + "");
-                }
+                next();
+                numText.setText("0");
+                questText.setText(quizDAOS.get(current-1).getQuestion());
+                dapAn = quizDAOS.get(current-1).getAns();
+                correctNum = 0;
+                MainActivity.myRef.child("flag").child("current").setValue(current);
             }
         });
 
@@ -86,6 +94,15 @@ public class RoutineFragment extends Fragment {
             }
         });
 
+        Button ansBtn = getView().findViewById(R.id.answer_btn);
+        ansBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                correctText.setText(correctNum+"");
+                ansText.setText(dapAn);
+            }
+        });
+
         myRef.child("quiz").child(QuizActivity.keyQuiz).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -93,9 +110,10 @@ public class RoutineFragment extends Fragment {
 
                 for (DataSnapshot d : snapshot.getChildren()){
                     count++;
+                    QuizDAO q = new QuizDAO(count+"", d);
+                    quizDAOS.add(q);
                 }
                 QuizActivity.size = count;
-                dataQuestion = snapshot;
             }
 
             @Override
@@ -108,8 +126,12 @@ public class RoutineFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 int count = 0;
+                correctNum = 0;
                 for (DataSnapshot d : snapshot.child(current+"").getChildren()){
                     count++;
+                    if(!(d.child("point").getValue()+"").equals("0")){
+                        correctNum++;
+                    }
                 }
                 numText.setText(count+"");
             }
@@ -119,6 +141,12 @@ public class RoutineFragment extends Fragment {
 
             }
         });
+        if(!AuthActivity.isAdmin){
+            ansBtn.setVisibility(View.INVISIBLE);
+            buttonPlay.setVisibility(View.INVISIBLE);
+            resetBtn.setVisibility(View.INVISIBLE);
+            questText.setText("Bạn không phải là admin nên không có quyền bắt đầu trò chơi");
+        }
     }
 
     public View onCreateView(@NonNull LayoutInflater inflater,

@@ -22,7 +22,7 @@
 
 
             <TextView
-                android:id="@+id/textView"
+                android:id="@+id/ho_ten_profile_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="40dp"
@@ -48,14 +48,14 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/textView2"
+                android:id="@+id/sdt_profile_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="ngohieu1811@gmail.com"
                 android:textColor="#fff"
                 android:textSize="18sp"
-                app:layout_constraintStart_toStartOf="@+id/textView"
-                app:layout_constraintTop_toBottomOf="@+id/textView" />
+                app:layout_constraintStart_toStartOf="@+id/ho_ten_profile_text"
+                app:layout_constraintTop_toBottomOf="@+id/ho_ten_profile_text" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cardView"

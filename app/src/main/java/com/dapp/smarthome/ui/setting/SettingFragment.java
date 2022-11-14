@@ -5,12 +5,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.dapp.smarthome.AuthActivity;
+import com.dapp.smarthome.MainActivity;
 import com.dapp.smarthome.R;
 import com.dapp.smarthome.databinding.FragmentSettingBinding;
 import com.dapp.smarthome.ui.setting.component.SettingAdapter;
@@ -35,6 +38,12 @@ public class SettingFragment extends Fragment {
         arrayList.add(new SettingItem("Change Password",""));
         arrayList.add(new SettingItem("Support",""));
         arrayList.add(new SettingItem("Sign out",""));
+
+        TextView ten = getView().findViewById(R.id.ho_ten_profile_text);
+        ten.setText(AuthActivity.fullname);
+
+        TextView username = getView().findViewById(R.id.sdt_profile_text);
+        username.setText(AuthActivity.username);
 
         listView.setAdapter(new SettingAdapter(getView().getContext(),R.layout.setting_item,arrayList));
     }

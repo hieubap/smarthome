@@ -38,6 +38,7 @@ public class AuthActivity extends AppCompatActivity {
     private RegisterBinding binding;
     private LoginBinding bindingLogin;
     public static String username;
+    public static String fullname;
     public static boolean isAdmin = false;
 
     @Override
@@ -88,6 +89,7 @@ public class AuthActivity extends AppCompatActivity {
                                 myIntent.putExtra("userKey", key); //Optional parameters
                                 AuthActivity.this.startActivity(myIntent);
                                 username = key;
+                                fullname = snapshot.child(key).child("ten").getValue() + "";
                             }else{
                                 Toast.makeText(getApplicationContext(),"Mật khẩu không đúng. Vui lòng kiểm tra mật khẩu",Toast.LENGTH_LONG).show();
                             }

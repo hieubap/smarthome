@@ -144,7 +144,6 @@ public class QuizActivity extends AppCompatActivity {
                 new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(ans.equals(snapshot.getValue())){
                     DatabaseReference d = myRef.child("answers").child(keyQuiz).child(keyQuestion);
 
                     myRef.child("answers").child(keyQuiz).child(keyQuestion).addListenerForSingleValueEvent(
@@ -152,7 +151,12 @@ public class QuizActivity extends AppCompatActivity {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot snapshot) {
                                     d.child(AuthActivity.username).child("ans").setValue(ans);
-                                    d.child(AuthActivity.username).child("point").setValue(100 - snapshot.getChildrenCount());
+
+                                    if(ans.equals(snapshot.getValue())) {
+                                        d.child(AuthActivity.username).child("point").setValue(100 - snapshot.getChildrenCount());
+                                    } else {
+                                        d.child(AuthActivity.username).child("point").setValue(0);
+                                    }
                                 }
 
                                 @Override
@@ -161,7 +165,6 @@ public class QuizActivity extends AppCompatActivity {
                                 }
                             }
                     );
-                }
             }
 
             @Override
