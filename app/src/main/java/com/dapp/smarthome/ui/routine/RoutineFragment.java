@@ -35,8 +35,8 @@ public class RoutineFragment extends Fragment {
     public static int current = 0;
     public TextView numText,questText,correctText, ansText;
     public DataSnapshot dataQuestion;
-    public String dapAn;
-    public int correctNum = 0;
+    public static String dapAn = "Đáp án", questStr = "Câu hỏi";
+    public static int correctNum = 0,numAnsInt = 0,trueColor = 0xffffffff;
     public List<QuizDAO> quizDAOS = new ArrayList<>();
 
     public void next(){
@@ -52,9 +52,14 @@ public class RoutineFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         numText = getView().findViewById(R.id.number_ans);
+        numText.setText(numAnsInt+"");
         questText = getView().findViewById(R.id.question_play_text);
+        questText.setText(questStr);
         correctText = getView().findViewById(R.id.correct_text);
+        correctText.setText(correctNum+"");
         ansText = getView().findViewById(R.id.answer_text);
+        ansText.setText(dapAn);
+        ansText.setBackgroundColor(trueColor);
 
         Button buttonPlay = getView().findViewById(R.id.btn_start);
         buttonPlay.setOnClickListener(new View.OnClickListener() {
@@ -74,10 +79,16 @@ public class RoutineFragment extends Fragment {
                 }
 
                 next();
-                numText.setText("0");
-                questText.setText(quizDAOS.get(current-1).getQuestion());
-                dapAn = quizDAOS.get(current-1).getAns();
+                questStr = quizDAOS.get(current-1).getQuestion();
                 correctNum = 0;
+                dapAn = "Đáp án";
+                trueColor = 0xffffffff;
+
+                numText.setText("0");
+                questText.setText(questStr);
+                ansText.setText("Đáp án");
+                ansText.setBackgroundColor(trueColor);
+                correctText.setText("Đúng");
                 MainActivity.myRef.child("flag").child("current").setValue(current);
             }
         });
@@ -98,8 +109,12 @@ public class RoutineFragment extends Fragment {
         ansBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                dapAn = quizDAOS.get(current-1).getAns();
+                trueColor = QuizActivity.color[dapAn.charAt(0) - 'A'];
+
                 correctText.setText(correctNum+"");
                 ansText.setText(dapAn);
+                ansText.setBackgroundColor(trueColor);
             }
         });
 
@@ -125,15 +140,15 @@ public class RoutineFragment extends Fragment {
         myRef.child("answers").child(QuizActivity.keyQuiz).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                int count = 0;
+                numAnsInt = 0;
                 correctNum = 0;
                 for (DataSnapshot d : snapshot.child(current+"").getChildren()){
-                    count++;
+                    numAnsInt++;
                     if(!(d.child("point").getValue()+"").equals("0")){
                         correctNum++;
                     }
                 }
-                numText.setText(count+"");
+                numText.setText(numAnsInt+"");
             }
 
             @Override

@@ -40,14 +40,26 @@ import java.util.Map;
 public class QuizActivity extends AppCompatActivity {
 
     private QuizBinding binding;
-    private TextView questionText;
-    private Button btn1,btn2,btn3,btn4;
+    private static TextView questionText;
+    private static Button btn1, btn2, btn3, btn4;
     public static String keyQuiz = "0002";
     public static String keyQuestion = "0";
-    private List<Button> listBtn = new ArrayList<>();
-    private boolean isClick = false;
+    private static List<Button> listBtn;
+    private static boolean isClick = false;
     public static int size = 100;
-    int[] color = new int[]{0xffff3758,0xff3793df,0xffffc108,0xff66be38};
+    public static int[] color = new int[]{0xffff3758, 0xff3793df, 0xffffc108, 0xff66be38};
+
+    void onUpdateQuestion(DataSnapshot snapshot) {
+        for (int i = 0; i < 4; i++) {
+            listBtn.get(i).setBackgroundColor(color[i]);
+        }
+        btn1.setText("" + snapshot.child("quiz").child(keyQuiz).child(keyQuestion).child("A").getValue());
+        btn2.setText("" + snapshot.child("quiz").child(keyQuiz).child(keyQuestion).child("B").getValue());
+        btn3.setText("" + snapshot.child("quiz").child(keyQuiz).child(keyQuestion).child("C").getValue());
+        btn4.setText("" + snapshot.child("quiz").child(keyQuiz).child(keyQuestion).child("D").getValue());
+        questionText.setText((String) snapshot.child("quiz").child(keyQuiz).child(keyQuestion).child("question").getValue());
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,31 +75,25 @@ public class QuizActivity extends AppCompatActivity {
         binding = QuizBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if( snapshot.child("flag").hasChild("current")
-                        && !keyQuestion.equals(""+snapshot.child("flag").child("current").getValue())){
+                if (snapshot.child("flag").hasChild("current")
+                        && !keyQuestion.equals("" + snapshot.child("flag").child("current").getValue())) {
                     keyQuestion = snapshot.child("flag").child("current").getValue().toString();
-
-                    for(int i=0;i<4;i++){
-                        listBtn.get(i).setBackgroundColor(color[i]);
-                    }
-                    btn1.setText(""+snapshot.child("quiz").child(keyQuiz).child(keyQuestion).child("A").getValue());
-                    btn2.setText(""+snapshot.child("quiz").child(keyQuiz).child(keyQuestion).child("B").getValue());
-                    btn3.setText(""+snapshot.child("quiz").child(keyQuiz).child(keyQuestion).child("C").getValue());
-                    btn4.setText(""+snapshot.child("quiz").child(keyQuiz).child(keyQuestion).child("D").getValue());
-                    questionText.setText((String)snapshot.child("quiz").child(keyQuiz).child(keyQuestion).child("question").getValue());
                     isClick = false;
+                    onUpdateQuestion(snapshot);
                 }
-                if(MainActivity.isAnswer && "init".equals(""+snapshot.child("flag").child("status").getValue())){
+                if (MainActivity.isAnswer && "init".equals("" + snapshot.child("flag").child("status").getValue())) {
                     Intent myIntent = new Intent(QuizActivity.this, MainActivity.class);
                     QuizActivity.this.startActivity(myIntent);
                     MainActivity.isAnswer = false;
+                    keyQuestion = "0";
+                    onStop();
                 }
-                }
+            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
@@ -100,11 +106,14 @@ public class QuizActivity extends AppCompatActivity {
         btn2 = binding.buttonAnswer2;
         btn3 = binding.buttonAnswer3;
         btn4 = binding.buttonAnswer4;
+        listBtn = new ArrayList<>();
         listBtn.add(btn1);
         listBtn.add(btn2);
         listBtn.add(btn3);
         listBtn.add(btn4);
-
+        for (int i = 0; i < 4; i++) {
+            listBtn.get(i).setBackgroundColor(color[i]);
+        }
 
         btn1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,45 +144,45 @@ public class QuizActivity extends AppCompatActivity {
         });
     }
 
-    private void clickAnswer(int number){
-        if(isClick) return;
+    private void clickAnswer(int number) {
+        if (isClick) return;
         isClick = true;
-        String ans = ""+(char)('A'+number-1);
+        String ans = "" + (char) ('A' + number - 1);
 
         myRef.child("quiz").child(keyQuiz).child(keyQuestion).child("answer").addListenerForSingleValueEvent(
                 new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    DatabaseReference d = myRef.child("answers").child(keyQuiz).child(keyQuestion);
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        DatabaseReference d = myRef.child("answers").child(keyQuiz).child(keyQuestion);
 
-                    myRef.child("answers").child(keyQuiz).child(keyQuestion).addListenerForSingleValueEvent(
-                            new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                    d.child(AuthActivity.username).child("ans").setValue(ans);
+                        myRef.child("answers").child(keyQuiz).child(keyQuestion).addListenerForSingleValueEvent(
+                                new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull DataSnapshot snapshot2) {
+                                        d.child(AuthActivity.username).child("ans").setValue(ans);
 
-                                    if(ans.equals(snapshot.getValue())) {
-                                        d.child(AuthActivity.username).child("point").setValue(100 - snapshot.getChildrenCount());
-                                    } else {
-                                        d.child(AuthActivity.username).child("point").setValue(0);
+                                        if (ans.equals(snapshot.getValue() + "")) {
+                                            d.child(AuthActivity.username).child("point").setValue(100 - 2 * snapshot2.getChildrenCount());
+                                        } else {
+                                            d.child(AuthActivity.username).child("point").setValue(0);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError error) {
+
                                     }
                                 }
+                        );
+                    }
 
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
 
-                                }
-                            }
-                    );
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-        for(int i=0;i<4;i++){
-            if(i != number-1){
+                    }
+                });
+        for (int i = 0; i < 4; i++) {
+            if (i != number - 1) {
                 listBtn.get(i).setBackgroundColor(0xff888888);
             }
         }

@@ -25,7 +25,7 @@
         android:layout_height="55dp"
         android:layout_marginStart="41dp"
         android:layout_marginTop="100dp"
-        android:text="TextView"
+        android:text="Số câu trả lời"
         android:textSize="32sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -37,7 +37,7 @@
         android:layout_marginStart="44dp"
         android:layout_marginTop="40dp"
         android:layout_marginEnd="45dp"
-        android:text="TextView"
+        android:text="Câu hỏi"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
