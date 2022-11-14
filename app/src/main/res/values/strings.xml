@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">SmartHome</string>
+    <string name="app_name">QuizHappy</string>
     <string name="title_home">Home</string>
     <string name="title_device">Device</string>
     <string name="title_routine">Routine</string>

@@ -1,4 +1,4 @@
-package com.dapp.smarthome.ui.home.component;
+package com.dapp.smarthome.adapter;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,15 +9,16 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.dapp.smarthome.R;
+import com.dapp.smarthome.adapter.Score;
 
 import java.util.List;
 
-public class RoomAdapter extends BaseAdapter {
+public class ScoreAdapter extends BaseAdapter {
     private Context context;
     private int layout;
-    private List<Room> arrayList;
+    private List<Score> arrayList;
 
-    public RoomAdapter(Context context, int layout, List<Room> arrayList) {
+    public ScoreAdapter(Context context, int layout, List<Score> arrayList) {
         this.context = context;
         this.layout = layout;
         this.arrayList = arrayList;
@@ -44,19 +45,17 @@ public class RoomAdapter extends BaseAdapter {
 
         view = inflater.inflate(layout,null);
 
-        Room room = arrayList.get(i);
-        ImageView imageView = view.findViewById(R.id.roomIcon);
-        TextView textRoomName =  view.findViewById(R.id.roomName);
-        TextView textNumDevice =  view.findViewById(R.id.numDevice);
+        Score device = arrayList.get(i);
+        TextView textRoomName =  view.findViewById(R.id.ho_ten_text);
+        TextView textNumDevice =  view.findViewById(R.id.point_text);
 
-        imageView.setImageResource(room.getResourceImage());
-        textRoomName.setText(room.getName());
-        textNumDevice.setText(room.getStr());
+        textRoomName.setText(device.getName());
+        textNumDevice.setText(device.getPoint());
 
         return view;
     }
 
-    public void setArr(List<Room> list){
-        this.arrayList = list;
+    public void setList(List<Score> list){
+        arrayList = list;
     }
 }
