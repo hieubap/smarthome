@@ -34,7 +34,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ValueEventListener {
 
     private ActivityMainBinding binding;
     public static boolean isAnswer = false;
@@ -71,24 +71,7 @@ public class MainActivity extends AppCompatActivity {
 //        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
 
-        myRef.child("flag").addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(!AuthActivity.isAdmin && !isAnswer
-                        && snapshot.hasChild("status")
-                        && ((String)snapshot.child("status").getValue()).equals("start")){
-                    Intent myIntent = new Intent(MainActivity.this, QuizActivity.class);
-//                    myIntent.putExtra("userKey", ); //Optional parameters
-                    MainActivity.this.startActivity(myIntent);
-                    isAnswer = true;
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        myRef.child("flag").addValueEventListener(this);
     }
 
     public static void setWindowFlag(Activity activity, final int bits, boolean on) {
@@ -141,5 +124,22 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public void onDataChange(@NonNull DataSnapshot snapshot) {
+        if(!AuthActivity.isAdmin && !isAnswer
+                && snapshot.hasChild("status")
+                && ((String)snapshot.child("status").getValue()).equals("start")){
+            Intent myIntent = new Intent(this, QuizActivity.class);
+//                    myIntent.putExtra("userKey", ); //Optional parameters
+            startActivity(myIntent);
+            isAnswer = true;
+        }
+    }
+
+    @Override
+    public void onCancelled(@NonNull DatabaseError error) {
+
     }
 }

@@ -66,16 +66,13 @@ public class RoutineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(current == QuizActivity.size){
-                    buttonPlay.setText("Start");
+                    buttonPlay.setText("Finish");
                     MainActivity.myRef.child("flag").child("status").setValue("finish");
                     return;
                 }else if(current == 0){
                     MainActivity.myRef.child("flag").child("status").setValue("start");
                 }else{
                     MainActivity.myRef.child("flag").child("status").setValue("playing");
-                    if(current == QuizActivity.size){
-                        buttonPlay.setText("Finish");
-                    }
                 }
 
                 next();
@@ -98,6 +95,7 @@ public class RoutineFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 reset();
+                buttonPlay.setText("Start");
                 MainActivity.myRef.child("flag").child("status").setValue("init");
                 MainActivity.myRef.child("flag").child("current").setValue(0);
                 MainActivity.myRef.child("answers").removeValue();
