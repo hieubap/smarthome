@@ -19,6 +19,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.dapp.smarthome.databinding.LoginBinding;
 import com.dapp.smarthome.databinding.RegisterBinding;
+import com.dapp.smarthome.research.DiagramClassActivity;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -77,19 +78,20 @@ public class AuthActivity extends AppCompatActivity {
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         String key = String.valueOf(bindingLogin.sdtText.getText());
                         String password = String.valueOf(bindingLogin.passwordText.getText());
-                        if(key.equals("43211234")){
-                            Intent myIntent = new Intent(AuthActivity.this, MainActivity.class);
+                        if(key.equals("1234")){
+                            Intent myIntent = new Intent(AuthActivity.this, DiagramClassActivity.class);
                             myIntent.putExtra("userKey", key); //Optional parameters
                             AuthActivity.this.startActivity(myIntent);
                             username = key;
                             isAdmin = true;
                         }else if(snapshot.hasChild(key)){
                             if(((String)snapshot.child(key).child("pass").getValue()).equals(password)){
-                                Intent myIntent = new Intent(AuthActivity.this, MainActivity.class);
+                                Intent myIntent = new Intent(AuthActivity.this, DiagramClassActivity.class);
                                 myIntent.putExtra("userKey", key); //Optional parameters
                                 AuthActivity.this.startActivity(myIntent);
                                 username = key;
                                 fullname = snapshot.child(key).child("ten").getValue() + "";
+                                isAdmin = false;
                             }else{
                                 Toast.makeText(getApplicationContext(),"Mật khẩu không đúng. Vui lòng kiểm tra mật khẩu",Toast.LENGTH_LONG).show();
                             }

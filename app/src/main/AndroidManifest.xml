@@ -14,16 +14,21 @@
         android:theme="@style/Theme.SmartHome"
         tools:targetApi="31" >
         <activity
-            android:name=".AuthActivity"
+            android:name=".research.DiagramClassActivity"
             android:exported="true"
             android:label="@string/title_activity_main"
             android:theme="@style/Theme.SmartHome.NoActionBar" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+<!--        <activity-->
+<!--            android:name=".research.DiagramClassActivity"-->
+<!--            android:screenOrientation="portrait" />-->
+        <activity
+            android:name=".research.InputInfoActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait" />

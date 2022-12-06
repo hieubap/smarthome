@@ -54,7 +54,6 @@ public class DeviceFragment extends Fragment {
 
         for(DataSnapshot d : snapshot.getChildren()){
             arrayList.add(new Score( (String)d.child("sdt").getValue(),(String)d.child("ten").getValue(),0));
-
         }
         this.arrayList = arrayList;
 
